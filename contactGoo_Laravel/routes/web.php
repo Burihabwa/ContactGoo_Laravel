@@ -6,8 +6,11 @@ use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ContactController::class, 'index']);
-Route::post('/store', [ContactController::class, 'store'])->name('store');
-Route::get('/fetchall', [ContactController::class, 'fetchAll'])->name('fetchAll');
+//Route::ressource('articles', [ArticleController::class, 'index']);
+Route::post('store', [ContactController::class, 'store'])->name('store');
+Route::get('fetchall', [ContactController::class, 'fetchAll'])->name('fetchAll');
+Route::get('selectItem/{item}', [ContactController::class, 'selectItem'])->name('selectItem');
+
 
 
 

@@ -8,6 +8,24 @@ use Illuminate\Support\Facades\Storage;
 
 class ContactController extends Controller
 {
+    public function selectItem($item){
+
+
+           $contatct = Contact::where(function($query) use($item){
+
+            if($item){
+                $query->where('nom', 'like','%'.$item.'%')
+                ->orWhere('prenom', 'like','%'.$item.'%')
+                ->orWhere('tel', 'like','%'.$item.'%');
+
+            }
+
+           })->get();
+
+
+        return  response()->json( $contatct , 200) ;
+    }
+
     public function index() {
 		return view('index');
 	}
@@ -15,33 +33,8 @@ class ContactController extends Controller
 
 	public function fetchAll() {
 		$conts = Contact::all();
-		$output = '';
-		if ($conts->count() > 0) {
+		return  response()->json( $conts , 200) ;
 
-            foreach ($conts as $cont) {
-                $output .=   '<div class="card mb-2 cont" >
-                <div class="row g-0">
-                <div class="col-md-2">
-                    <center>
-                    <img src="storage/images/'.$cont->profil.'" height="80px" style="border-radius: 50%;" width="80px" class="p-1" alt="...">
-                    </center>
-                    </div>
-                <div class="col-md-10">
-                    <div class="card-body">
-                    <h5 class="card-title">'.$cont->nom.' '.$cont->prenom.'</h5>
-                    <p class="card-text">'.$cont->tel.'</p>
-                    </div>
-                </div>
-                </div>
-            </div>';
-
-            }
-
-
-			echo $output;
-		} else {
-			echo '<h1 class="text-center text-secondary my-5"><h1 class="text-center text-secondary my-5">Aucun  contact present dans la base de donnée !</h1></h1>';
-		}
 
 	}
 

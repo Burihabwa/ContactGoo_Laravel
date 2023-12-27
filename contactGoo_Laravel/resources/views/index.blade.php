@@ -8,7 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>contact</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css')}}">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -43,10 +43,9 @@
 
             <div class="row height d-flex justify-content-center align-items-center">
             <div class="">
-
                 <div class="form">
                 <i class="fa fa-search"></i>
-                <input type="text" class="form-control form-input" placeholder="Cherche Contact">
+                <input type="text" id="filter"  class="form-control form-input" placeholder="Cherche Contact">
                 <span class="left-pan"><i class="fa fa-microphone"></i></span>
                 </div>
 
@@ -219,6 +218,9 @@
         reader.readAsDataURL(f);
         });
     }
+
+
+
     </script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
@@ -255,7 +257,9 @@
             url: '{{ route('fetchAll') }}',
             method: 'GET',
             success: function(reponse) {
-                $('#Contact').html(reponse)
+
+                loadMain(reponse)
+                //$('#Contact').html(reponse)
                 /*console.log(reponse);
                 console.log('success')*/
             }
@@ -265,6 +269,57 @@
         function fetchAllFreq(){
             $('#Contact').html('<div></div>')
         }
+
+        $("#filter").on('keyup', function(event){
+            let searchValue = $(this).val();
+            console.log(searchValue);
+
+            $.ajax({
+                method: "GET",
+                url : `selectItem/${searchValue}`,
+                success : function(data){
+                    loadMain(data)
+                    console.log(data)
+                },
+                error : function(err){
+                    console.log(err)
+                }
+            })
+        })
+
+
+        function loadMain(data){
+
+            let table = ``
+            let verif=false;
+            for(let item of data){
+                verif = true;
+                table += `
+                <div class="card mb-2 cont" >
+                <div class="row g-0">
+                <div class="col-md-2">
+                    <center>
+                    <img src="storage/images/${item.profil}" height="80px" style="border-radius: 50%;" width="80px" class="p-1" alt="...">
+                    </center>
+                    </div>
+                <div class="col-md-10">
+                    <div class="card-body">
+                    <h5 class="card-title">${item.nom} ${item.prenom}</h5>
+                    <p class="card-text">${item.tel}</p>
+                    </div>
+                </div>
+                </div>
+            </div>`
+            }
+
+            if(verif){
+                $("#Contact").html(table)
+            }else{
+                $("#Contact").html('<h1 class="text-center text-secondary my-5"><h1 class="text-center text-secondary my-5">Aucun  contact present dans la base de donnée !</h1></h1>')
+
+            }
+        }
+
     </script>
 
     </body>
